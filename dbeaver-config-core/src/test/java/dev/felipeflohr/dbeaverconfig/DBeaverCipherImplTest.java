@@ -63,7 +63,7 @@ class DBeaverCipherImplTest {
         System.setProperty("user.home", home.toString());
         Path dir = home.resolve(".local").resolve("share").resolve(DBEAVER_DIR);
         Files.createDirectories(dir);
-        Files.copy(credentialsResource(), dir.resolve("data-sources.json"));
+        Files.copy(credentialsResource(), dir.resolve("credentials-config.json"));
 
         assertEquals(4, cipher.getConnectionsAuthentication().size());
     }
