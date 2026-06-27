@@ -80,12 +80,12 @@ class DBeaverCipherConfigTest {
 
         Path expectedMissing = Path.of(TEST_HOME, ".local", "share")
                 .resolve(DBEAVER_RELATIVE)
-                .resolve("data-sources.json");
+                .resolve("credentials-config.json");
         assertEquals(expectedMissing, ex.getConfigFile());
     }
 
     private Path createConfigFileUnder(Path base) throws IOException {
-        Path file = base.resolve(DBEAVER_RELATIVE).resolve("data-sources.json");
+        Path file = base.resolve(DBEAVER_RELATIVE).resolve("credentials-config.json");
         Files.createDirectories(file.getParent());
         Files.createFile(file);
         return file;

@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  release:
+    types: [prereleased]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          server-id: github
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Derive version from tag
+        id: version
+        run: echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
+      - name: Run tests
+        run: ./mvnw -B -Drevision=${{ steps.version.outputs.version }} verify
+
+      - name: Deploy to GitHub Packages
+        run: ./mvnw -B -Drevision=${{ steps.version.outputs.version }} -DskipTests deploy
+        env:
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote pre-release to release
+        run: gh release edit "${{ github.event.release.tag_name }}" --prerelease=false
+        env:
+          GH_TOKEN: ${{ github.token }}

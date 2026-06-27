@@ -36,6 +36,6 @@ public class DBeaverCipherConfig {
     }
 
     private static Path getDefaultCredentialsConfigFilePath() {
-        return DBeaverDirectoryProvider.getDefaultDBeaverDirectory().resolve("data-sources.json");
+        return DBeaverDirectoryProvider.getDefaultDBeaverDirectory().resolve("credentials-config.json");
     }
 }
