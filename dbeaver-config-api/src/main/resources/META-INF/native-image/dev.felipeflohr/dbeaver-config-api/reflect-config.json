@@ -1,0 +1,38 @@
+[
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverDataSources",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnection",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionConfiguration",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionConfigurationHandlers",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionConfigurationSSHTunnelHandler",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionConfigurationSSHTunnelProperties",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredFields": true
+  }
+]
