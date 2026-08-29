@@ -1,6 +1,7 @@
 package dev.felipeflohr.dbeaverconfig;
 
 import dev.felipeflohr.dbeaverconfig.data.auth.DBeaverAuthConnectionData;
+import dev.felipeflohr.dbeaverconfig.data.auth.DBeaverAuthSSHTunnel;
 import dev.felipeflohr.dbeaverconfig.data.config.DBeaverCipherConfig;
 import dev.felipeflohr.dbeaverconfig.exception.DBeaverCredentialsFileFailedToReadException;
 import dev.felipeflohr.dbeaverconfig.exception.DBeaverDecryptedContentTooShortException;
@@ -57,6 +58,26 @@ class DBeaverCipherImplTest {
         assertEquals("sysdba", oracleSysdba.getConnection().getOracleLogonAs());
     }
 
+    @Test
+    void decryptsSshTunnelPassphraseWhenKeyHasOne() throws Exception {
+        Map<String, DBeaverAuthConnectionData> connections = cipher.getConnectionsAuthentication(config(credentialsResource()));
+
+        DBeaverAuthSSHTunnel sshTunnel = connections.get("oracle_thin-1a04e5da314-638ba8bf46a81b7c").getSshTunnel();
+        assertNotNull(sshTunnel);
+        assertEquals("sshuser", sshTunnel.getUser());
+        assertEquals("keypassphrase", sshTunnel.getPassword());
+    }
+
+    @Test
+    void decryptsSshTunnelWithoutPassphrase() throws Exception {
+        Map<String, DBeaverAuthConnectionData> connections = cipher.getConnectionsAuthentication(config(credentialsResource()));
+
+        DBeaverAuthSSHTunnel sshTunnel = connections.get("mysql8-1a04e64fc31-22331740ccca195c").getSshTunnel();
+        assertNotNull(sshTunnel);
+        assertEquals("keyuser", sshTunnel.getUser());
+        assertNull(sshTunnel.getPassword());
+    }
+
     @RestoreSystemProperties
     @Test
     void decryptsConnectionsAuthenticationFromDefaultLocation(@TempDir Path home) throws Exception {
@@ -65,7 +86,7 @@ class DBeaverCipherImplTest {
         Files.createDirectories(dir);
         Files.copy(credentialsResource(), dir.resolve("credentials-config.json"));
 
-        assertEquals(4, cipher.getConnectionsAuthentication().size());
+        assertEquals(7, cipher.getConnectionsAuthentication().size());
     }
 
     @Test

@@ -1,10 +1,12 @@
 package dev.felipeflohr.dbeaverconfig.data.datasource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 @Data
@@ -15,4 +17,13 @@ public class DBeaverConnectionConfigurationSSHTunnelProperties {
     private String host;
     private int port;
     private String authType;
+
+    @Nullable
+    private String keyPath;
+
+    @Nullable
+    private String implementation;
+
+    @JsonProperty("jumpServer.count")
+    private int jumpServerCount;
 }
