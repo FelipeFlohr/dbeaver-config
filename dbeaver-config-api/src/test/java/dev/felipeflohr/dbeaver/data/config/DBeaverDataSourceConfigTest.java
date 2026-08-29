@@ -46,7 +46,7 @@ class DBeaverDataSourceConfigTest {
     @SetSystemProperty(key = "os.name", value = "Mac OS X")
     @SetSystemProperty(key = "user.home", value = TEST_HOME)
     void usesMacFolderWhenOnMac() throws DBeaverConfigException, IOException {
-        Path expected = createConfigFileUnder(Path.of(TEST_HOME, "Library", "DBeaverData"));
+        Path expected = createConfigFileUnder(Path.of(TEST_HOME, "Library"));
 
         DBeaverDataSourceConfig config = DBeaverDataSourceConfig.ofDefault();
 
