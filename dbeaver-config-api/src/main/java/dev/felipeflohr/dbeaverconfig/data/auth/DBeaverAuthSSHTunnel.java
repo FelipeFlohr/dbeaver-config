@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 @Data
@@ -13,5 +14,7 @@ import org.jspecify.annotations.NullMarked;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DBeaverAuthSSHTunnel {
     private String user;
+
+    @Nullable
     private String password;
 }

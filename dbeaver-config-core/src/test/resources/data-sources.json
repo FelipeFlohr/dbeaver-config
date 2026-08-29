@@ -114,6 +114,104 @@
         },
         "auth-model": "oracle_native"
       }
+    },
+    "oracle_thin-1a04e5da314-638ba8bf46a81b7c": {
+      "provider": "oracle",
+      "driver": "oracle_thin",
+      "name": "Oracle SSH Public Key",
+      "save-password": true,
+      "configuration": {
+        "host": "localhost",
+        "port": "1521",
+        "database": "ORCL",
+        "url": "jdbc:oracle:thin:@//localhost:1521/ORCL",
+        "configurationType": "MANUAL",
+        "type": "dev",
+        "auth-model": "oracle_native",
+        "handlers": {
+          "ssh_tunnel": {
+            "type": "TUNNEL",
+            "enabled": true,
+            "save-password": true,
+            "properties": {
+              "jumpServer.count": 0,
+              "host": "ssh.example.com",
+              "port": 22,
+              "authType": "PUBLIC_KEY",
+              "keyPath": "/home/felipe/.ssh/id_rsa",
+              "implementation": "sshj",
+              "shareTunnels": true,
+              "localHost": "",
+              "remoteHost": ""
+            }
+          }
+        }
+      }
+    },
+    "mysql8-1a04e64fc31-22331740ccca195c": {
+      "provider": "mysql",
+      "driver": "mysql8",
+      "name": "MySQL SSH Key Without Passphrase",
+      "save-password": true,
+      "configuration": {
+        "host": "localhost",
+        "port": "3306",
+        "database": "database-goes-here",
+        "url": "jdbc:mysql://localhost:3306/database-goes-here",
+        "configurationType": "MANUAL",
+        "type": "dev",
+        "auth-model": "native",
+        "handlers": {
+          "ssh_tunnel": {
+            "type": "TUNNEL",
+            "enabled": true,
+            "save-password": true,
+            "properties": {
+              "jumpServer.count": 0,
+              "host": "ssh.example.com",
+              "port": 22,
+              "authType": "PUBLIC_KEY",
+              "keyPath": "/home/felipe/.ssh/id_ed25519",
+              "implementation": "sshj",
+              "shareTunnels": true,
+              "localHost": "",
+              "remoteHost": ""
+            }
+          }
+        }
+      }
+    },
+    "postgres-jdbc-1a04e7000aa-11223344556677aa": {
+      "provider": "postgresql",
+      "driver": "postgres-jdbc",
+      "name": "Postgres Behind Jump Server",
+      "save-password": true,
+      "configuration": {
+        "host": "localhost",
+        "port": "5432",
+        "database": "jump",
+        "url": "jdbc:postgresql://localhost:5432/jump",
+        "configurationType": "MANUAL",
+        "type": "prod",
+        "auth-model": "native",
+        "handlers": {
+          "ssh_tunnel": {
+            "type": "TUNNEL",
+            "enabled": true,
+            "save-password": true,
+            "properties": {
+              "jumpServer.count": 2,
+              "host": "bastion.example.com",
+              "port": 2222,
+              "authType": "AGENT",
+              "implementation": "jsch",
+              "shareTunnels": true,
+              "localHost": "",
+              "remoteHost": ""
+            }
+          }
+        }
+      }
     }
   },
   "connection-types": {

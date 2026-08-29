@@ -2,8 +2,10 @@ package dev.felipeflohr.dbeaverconfig;
 
 import dev.felipeflohr.dbeaverconfig.data.config.DBeaverDataSourceConfig;
 import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnection;
+import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionConfigurationSSHTunnelProperties;
 import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionType;
 import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverDataSources;
+import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverSSHAuthType;
 import dev.felipeflohr.dbeaverconfig.exception.DBeaverFailedToReadDataSourcesFromJsonException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -15,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +37,7 @@ class DBeaverDataSourceImplTest {
     @Test
     void parsesDataSources() throws Exception {
         DBeaverDataSources dataSources = dataSource.getDataSources(config());
-        assertEquals(4, dataSources.getConnections().size());
+        assertEquals(7, dataSources.getConnections().size());
 
         DBeaverConnection postgres = dataSources.getConnections().get("postgres-jdbc-196079609f2-53d190edd595caaa");
         assertEquals("postgresql", postgres.getProvider());
@@ -83,6 +86,58 @@ class DBeaverDataSourceImplTest {
         assertFalse(prodConnectionType.isAutoCommit());
     }
 
+    @Test
+    void parsesSshTunnelWithPasswordAuthentication() throws Exception {
+        DBeaverConnectionConfigurationSSHTunnelProperties properties =
+                sshTunnelProperties("postgres-jdbc-19bc99acaa1-78b516adfdeb47d9");
+
+        assertEquals(Optional.of(DBeaverSSHAuthType.PASSWORD), DBeaverSSHAuthType.fromValue(properties.getAuthType()));
+        assertNull(properties.getKeyPath());
+        assertEquals("sshj", properties.getImplementation());
+        assertEquals(0, properties.getJumpServerCount());
+    }
+
+    @Test
+    void parsesSshTunnelWithPublicKeyAuthentication() throws Exception {
+        DBeaverConnectionConfigurationSSHTunnelProperties properties =
+                sshTunnelProperties("oracle_thin-1a04e5da314-638ba8bf46a81b7c");
+
+        assertEquals(Optional.of(DBeaverSSHAuthType.PUBLIC_KEY), DBeaverSSHAuthType.fromValue(properties.getAuthType()));
+        assertEquals("/home/felipe/.ssh/id_rsa", properties.getKeyPath());
+        assertEquals("sshj", properties.getImplementation());
+        assertEquals("ssh.example.com", properties.getHost());
+        assertEquals(22, properties.getPort());
+        assertEquals(0, properties.getJumpServerCount());
+    }
+
+    @Test
+    void parsesSshTunnelWithPublicKeyWithoutPassphrase() throws Exception {
+        DBeaverConnectionConfigurationSSHTunnelProperties properties =
+                sshTunnelProperties("mysql8-1a04e64fc31-22331740ccca195c");
+
+        assertEquals(Optional.of(DBeaverSSHAuthType.PUBLIC_KEY), DBeaverSSHAuthType.fromValue(properties.getAuthType()));
+        assertEquals("/home/felipe/.ssh/id_ed25519", properties.getKeyPath());
+        assertEquals(0, properties.getJumpServerCount());
+    }
+
+    @Test
+    void parsesSshTunnelWithJumpServers() throws Exception {
+        DBeaverConnectionConfigurationSSHTunnelProperties properties =
+                sshTunnelProperties("postgres-jdbc-1a04e7000aa-11223344556677aa");
+
+        assertEquals(Optional.of(DBeaverSSHAuthType.AGENT), DBeaverSSHAuthType.fromValue(properties.getAuthType()));
+        assertEquals(2, properties.getJumpServerCount());
+        assertEquals("bastion.example.com", properties.getHost());
+        assertEquals(2222, properties.getPort());
+        assertNull(properties.getKeyPath());
+    }
+
+    private DBeaverConnectionConfigurationSSHTunnelProperties sshTunnelProperties(String connectionId) throws Exception {
+        DBeaverConnection connection = dataSource.getDataSources(config()).getConnections().get(connectionId);
+        return Objects.requireNonNull(
+                Objects.requireNonNull(connection.getConfiguration().getHandlers()).getSshTunnel()).getProperties();
+    }
+
     @RestoreSystemProperties
     @Test
     void parsesDataSourcesFromDefaultLocation(@TempDir Path home) throws Exception {
@@ -91,7 +146,7 @@ class DBeaverDataSourceImplTest {
         Files.createDirectories(dir);
         Files.copy(dataSourcesResource(), dir.resolve("data-sources.json"));
 
-        assertEquals(4, dataSource.getDataSources().getConnections().size());
+        assertEquals(7, dataSource.getDataSources().getConnections().size());
     }
 
     @Test
