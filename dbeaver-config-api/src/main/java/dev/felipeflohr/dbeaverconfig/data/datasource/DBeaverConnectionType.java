@@ -6,19 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Map;
 
 @NullMarked
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DBeaverDataSources {
-    private Map<String, DBeaverConnection> connections;
+public class DBeaverConnectionType {
+    private String name;
 
-    @Nullable
-    @JsonProperty("connection-types")
-    private Map<String, DBeaverConnectionType> connectionTypes;
+    private String description;
+
+    @JsonProperty("auto-commit")
+    private boolean autoCommit;
 }

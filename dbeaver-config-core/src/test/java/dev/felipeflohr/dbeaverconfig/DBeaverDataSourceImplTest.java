@@ -2,6 +2,7 @@ package dev.felipeflohr.dbeaverconfig;
 
 import dev.felipeflohr.dbeaverconfig.data.config.DBeaverDataSourceConfig;
 import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnection;
+import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverConnectionType;
 import dev.felipeflohr.dbeaverconfig.data.datasource.DBeaverDataSources;
 import dev.felipeflohr.dbeaverconfig.exception.DBeaverFailedToReadDataSourcesFromJsonException;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +65,22 @@ class DBeaverDataSourceImplTest {
         assertEquals("Oracle as SYSDBA", oracleSysdba.getName());
         assertEquals("jdbc:oracle:thin:@localhost:1521:ORCLSIDASSYSDBA", oracleSysdba.getConfiguration().getUrl());
         assertNull(oracleSysdba.getConfiguration().getHandlers());
+
+        Map<String, DBeaverConnectionType> connectionTypes = dataSources.getConnectionTypes();
+        assertNotNull(connectionTypes);
+        assertEquals(2, connectionTypes.size());
+
+        DBeaverConnectionType devConnectionType = connectionTypes.get("dev");
+        assertNotNull(devConnectionType);
+        assertEquals("Development", devConnectionType.getName());
+        assertEquals("Regular development database", devConnectionType.getDescription());
+        assertTrue(devConnectionType.isAutoCommit());
+
+        DBeaverConnectionType prodConnectionType = connectionTypes.get("prod");
+        assertNotNull(prodConnectionType);
+        assertEquals("Production", prodConnectionType.getName());
+        assertEquals("Production database", prodConnectionType.getDescription());
+        assertFalse(prodConnectionType.isAutoCommit());
     }
 
     @RestoreSystemProperties
