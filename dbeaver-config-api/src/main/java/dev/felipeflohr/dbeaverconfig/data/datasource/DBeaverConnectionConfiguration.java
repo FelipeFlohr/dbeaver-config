@@ -15,6 +15,8 @@ import org.jspecify.annotations.Nullable;
 public class DBeaverConnectionConfiguration {
     private String url;
 
+    private String type;
+
     @Nullable
     private DBeaverConnectionConfigurationHandlers handlers;
 }
